@@ -8,7 +8,8 @@ from snippets.serializers import *
 from rest_framework import status
 from rest_framework.views import APIView
 from django.http import Http404
-
+from rest_framework import generics
+from rest_framework import permissions
 
 @api_view(['GET', 'POST'])
 def snippet_list(request, format=None):
@@ -56,6 +57,7 @@ def snippet_detail(request, pk, format=None):
 
 
 class SnippetList(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     """
     List all snippets, or creat. the name
     """
@@ -74,6 +76,7 @@ class SnippetList(APIView):
 
 
 class SnippetDetail(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     """
     Retrieve, update or delete a snippet instance.
     """
@@ -101,3 +104,16 @@ class SnippetDetail(APIView):
         snippet = self.get_object(pk)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
