@@ -57,7 +57,7 @@ def snippet_detail(request, pk, format=None):
 
 class SnippetList(APIView):
     """
-    List all snippets, or create a new snippet. the name
+    List all snippets, or creat. the name
     """
 
     def get(self, request, format=None):
